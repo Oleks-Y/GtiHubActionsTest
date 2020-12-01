@@ -24,15 +24,30 @@ jobs:
       - name: Push image to docker.io
         # Пушим образ в registry
         run: docker push $LOGIN/$NAME:${GITHUB_REF:11}
-  deploy:
-    # Если мы успешно собрали контейнер и отправили в registry, то делаем хук деплоймент серверу
-    # Попробуем готовый экшен curl из маркетплэйса
+  # deploy:
+  #   # Если мы успешно собрали контейнер и отправили в registry, то делаем хук деплоймент серверу
+  #   # Попробуем готовый экшен curl из маркетплэйса
+  #   needs: build_and_pub
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Set tag to env
+  #       # run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
+  #       run: echo "{RELEASE_VERSION}={${GITHUB_REF:11}}"
+  #     - name: Send webhook for deploy
+  #       # run: "curl --silent --show-error --fail -X POST ${{ secrets.DEPLOYMENT_SERVER }} -H 'Authorization: ${{ secrets.DEPLOYMENT_TOKEN }}' -H 'Content-Type: application/json' -d '{\"owner\": \"${{ secrets.DOCKER_LOGIN }}\", \"repository\": \"${{ secrets.DOCKER_NAME }}\", \"tag\": \"${{ env.RELEASE_VERSION }}\", \"ports\": {\"8080\": 8080}}'"
+  #       run: "curl --location --silent --show-error --fail --request POST ${{ secrets.DEPLOYMENT_SERVER }} -H 'Authorization: ${{ secrets.DEPLOYMENT_TOKEN }}' -H 'Content-Type: application/json' --data-raw '{\"owner\": \"${{ secrets.DOCKER_LOGIN }}\", \"repository\": \"${{ secrets.DOCKER_NAME }}\", \"tag\": \"${{ env.RELEASE_VERSION }}\", \"ports\": {\"8080\": 8080}}'"
+  deploy :
     needs: build_and_pub
     runs-on: ubuntu-latest
-    steps:
-      - name: Set tag to env
-        # run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
-        run: echo "{RELEASE_VERSION}={${GITHUB_REF:11}}"
-      - name: Send webhook for deploy
-        # run: "curl --silent --show-error --fail -X POST ${{ secrets.DEPLOYMENT_SERVER }} -H 'Authorization: ${{ secrets.DEPLOYMENT_TOKEN }}' -H 'Content-Type: application/json' -d '{\"owner\": \"${{ secrets.DOCKER_LOGIN }}\", \"repository\": \"${{ secrets.DOCKER_NAME }}\", \"tag\": \"${{ env.RELEASE_VERSION }}\", \"ports\": {\"8080\": 8080}}'"
-        run: "curl --location --silent --show-error --fail --request POST ${{ secrets.DEPLOYMENT_SERVER }} -H 'Authorization: ${{ secrets.DEPLOYMENT_TOKEN }}' -H 'Content-Type: application/json' --data-raw '{\"owner\": \"${{ secrets.DOCKER_LOGIN }}\", \"repository\": \"${{ secrets.DOCKER_NAME }}\", \"tag\": \"${{ env.RELEASE_VERSION }}\", \"ports\": {\"8080\": 8080}}'"
+    steps: 
+    - name:
+      uses: appleboy/ssh-action@master
+      with: 
+        host : ${{ secrects.HOST }}
+        username: ${{ secrets.HOST_USER }}
+        password : ${{ HOST_PASSWORD }}
+        port: "22"
+        script:
+          docker stop $(docker ps -a -q)
+          docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ env.RELEASE_VERSION }} 
+          docker run -dit 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ env.RELEASE_VERSION }}
