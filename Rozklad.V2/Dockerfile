@@ -26,8 +26,8 @@ RUN dotnet publish "Rozklad.V2.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim
 
 
-COPY --from=trajano/ubuntu-faketime  /faketime.so /lib/faketime.so
-ENV LD_PRELOAD=/lib/faketime.so
+# COPY --from=trajano/ubuntu-faketime  /faketime.so /lib/faketime.so
+# ENV LD_PRELOAD=/lib/faketime.so
 
 EXPOSE 80
 
