@@ -47,7 +47,7 @@ jobs:
         username: ${{ secrets.HOST_USER }}
         password : ${{ secrets.HOST_PASSWORD }}
         port: "22"
-        script:
+        script: | 
           docker stop $(docker ps -a -q)
           docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ env.RELEASE_VERSION }} 
           docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ env.RELEASE_VERSION }}
