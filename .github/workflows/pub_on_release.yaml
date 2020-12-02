@@ -41,7 +41,8 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
     - name: Set tag to env
-      run: echo "{RELEASE_VERSION}={${GITHUB_REF:11}}"
+      env:
+        RELEASE_VERSION: ${GITHUB_REF:11}
     - name:
       uses: appleboy/ssh-action@master
       with: 
