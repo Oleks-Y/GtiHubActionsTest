@@ -43,6 +43,7 @@ jobs:
     - name: Set tag to env
       env:
         RELEASE_VERSION: ${GITHUB_REF:11}
+      run: echo $RELEASE_VERSION
     - name:
       uses: appleboy/ssh-action@master
       with: 
