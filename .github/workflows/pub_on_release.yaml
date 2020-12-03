@@ -42,7 +42,7 @@ jobs:
     steps: 
     - name: Set tag to env
       env:
-        RELEASE_VERSION: ${GITHUB_REF:11}
+        RELEASE_VERSION: ${GITHUB_REF}
       run: echo $RELEASE_VERSION
     - name:
       uses: appleboy/ssh-action@master
@@ -53,5 +53,5 @@ jobs:
         port: "22"
         script: | 
           docker stop $(docker ps -a -q)
-          docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:master
-          docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:master
+          docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ RELEASE_VERSION }}
+          docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ RELEASE_VERSION }}
