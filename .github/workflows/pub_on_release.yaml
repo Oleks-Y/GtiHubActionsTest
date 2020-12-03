@@ -53,5 +53,5 @@ jobs:
         port: "22"
         script: | 
           docker stop $(docker ps -a -q)
-          docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:$RELEASE_VERSION
-          docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:$RELEASE_VERSION
+          docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${RELEASE_VERSION}
+          docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${RELEASE_VERSION}
