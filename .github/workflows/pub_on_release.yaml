@@ -53,5 +53,10 @@ jobs:
         port: "22"
         script: | 
           docker stop $(docker ps -a -q)
+<<<<<<< HEAD
           docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:$env.RELEASE_VERSION
           docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:$env.RELEASE_VERSION
+=======
+          docker pull ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ env.RELEASE_VERSION }}
+        docker run -dit -p 80:80 ${{ secrets.DOCKER_LOGIN }}/${{ secrets.DOCKER_NAME }}:${{ env.RELEASE_VERSION }}
+>>>>>>> 8396c4f5312d95a2ec649c0101a4e0d935b2e591
